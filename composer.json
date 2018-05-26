@@ -1,0 +1,31 @@
+{
+  "name": "smart-gamma/php-composter-quality-tool",
+  "description": "PHP Composter Smart Gamma quality tool (pre-commit)",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Evgeniy Kuzmin",
+      "email": "evgeniy.k@smart-gamma.com"
+    }
+  ],
+  "type": "php-composter-action",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php-composter/php-composter": "^0.2",
+    "symfony/console": "^3.0",
+    "symfony/process": "^3.0",
+    "squizlabs/php_codesniffer": "@stable",
+    "friendsofphp/php-cs-fixer": "^2.11"
+  },
+  "autoload": {
+    "psr-4": {
+      "PHPComposter\\GammaQualityTool\\": "src/"
+    }
+  },
+  "extra": {
+    "php-composter-hooks": {
+      "10.pre-commit": "PHPComposter\\GammaQualityTool\\Sniffer::preCommit"
+    }
+  }
+}

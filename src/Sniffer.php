@@ -17,5 +17,11 @@ class Sniffer extends BaseAction
     {
         $app = new CodeQualityTool();
         $app->run();
+
+        if($app->isCodeStyleViolated()) {
+            exit(0);
+        } else {
+            exit(1);
+        }
     }
 }

@@ -8,6 +8,8 @@ use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
+define('VENDOR_DIR', __DIR__ . '/../../../../../vendor');
+
 class CodeQualityTool extends Application
 {
     const IS_PHPMD    = false;
@@ -35,6 +37,11 @@ class CodeQualityTool extends Application
     public function __construct()
     {
         parent::__construct('Smart Gamma Quality Tool', '1.0.0');
+    }
+
+    public function isCodeStyleViolated()
+    {
+        return $this->isCodeStyleViolated;
     }
 
     /**
@@ -190,7 +197,7 @@ class CodeQualityTool extends Application
                 continue;
             }
             $processBuilder = new ProcessBuilder(array('php', VENDOR_DIR . '/bin/php-cs-fixer', '--dry-run', '--diff', '--verbose', 'fix', $file, '--rules=@PSR2'));
-            $processBuilder->setWorkingDirectory(__DIR__ . '/../');
+            $processBuilder->setWorkingDirectory(__DIR__ . '/../../../../../');
             $phpCsFixer = $processBuilder->getProcess();
             $phpCsFixer->enableOutput();
             $phpCsFixer->run();
@@ -217,7 +224,7 @@ class CodeQualityTool extends Application
                 continue;
             }
             $processBuilder = new ProcessBuilder(array('php', VENDOR_DIR . '/bin/php-cs-fixer', 'fix', $file, '--rules=@PSR2'));
-            $processBuilder->setWorkingDirectory(__DIR__ . '/../');
+            $processBuilder->setWorkingDirectory(__DIR__ . '/../../../../../');
             $phpCsFixer = $processBuilder->getProcess();
             $phpCsFixer->enableOutput();
             $phpCsFixer->run();
@@ -247,7 +254,7 @@ class CodeQualityTool extends Application
             }
 
             $processBuilder = new ProcessBuilder(array('php', VENDOR_DIR . '/bin/phpcs', '-n', '--standard=' . $standard, $file));
-            $processBuilder->setWorkingDirectory(__DIR__ . '/../');
+            $processBuilder->setWorkingDirectory(__DIR__ . '/../../../../../');
             $phpCsFixer = $processBuilder->getProcess();
             $phpCsFixer->run();
             if (!$phpCsFixer->isSuccessful()) {

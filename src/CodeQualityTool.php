@@ -53,6 +53,7 @@ class CodeQualityTool extends Application
      */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
+        $this->isCodeStyleViolated = false;
         $this->input  = $input;
         $this->output = $output;
         $this->output->writeln('<fg=white;options=bold;bg=red>Code Quality Tool</fg=white;options=bold;bg=red>');

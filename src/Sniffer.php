@@ -10,18 +10,21 @@
 namespace PHPComposter\GammaQualityTool;
 
 use PHPComposter\PHPComposter\BaseAction;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
+
 
 class Sniffer extends BaseAction
 {
     public function preCommit()
     {
         $app = new CodeQualityTool();
-        $app->run();
+        $app->doRun(new ArgvInput(), new ConsoleOutput());
 
         if($app->isCodeStyleViolated()) {
-            exit(0);
-        } else {
             exit(1);
+        } else {
+            exit(0);
         }
     }
 }

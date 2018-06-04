@@ -12,7 +12,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php-composter/php-composter": "^0.2",
+    "php-composter/php-composter": "dev-master",
     "symfony/console": "^3.0",
     "symfony/process": "^3.0",
     "squizlabs/php_codesniffer": "@stable",

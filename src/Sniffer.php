@@ -21,10 +21,11 @@ class Sniffer extends BaseAction
         $app = new CodeQualityTool();
         $app->doRun(new ArgvInput(), new ConsoleOutput());
 
-        if($app->isCodeStyleViolated()) {
-            exit(1);
-        } else {
+        if(!$app->isCodeStyleViolated()) {
             exit(0);
+        } else {
+            echo 'PHP Code Sniffer found errors! Aborting Commit.' . PHP_EOL;
+            exit(1);
         }
     }
 }

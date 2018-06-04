@@ -23,10 +23,16 @@ class CodeQualityTool extends Application
      * @var OutputInterface
      */
     private $output;
+
     /**
      * @var InputInterface
      */
     private $input;
+
+    /**
+     * @var array
+     */
+    private $commitedFiles = [];
 
     private $isCodeStyleViolated = false;
 
@@ -44,6 +50,7 @@ class CodeQualityTool extends Application
         return $this->isCodeStyleViolated;
     }
 
+
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
@@ -54,21 +61,21 @@ class CodeQualityTool extends Application
     public function doRun(InputInterface $input, OutputInterface $output)
     {
         $this->isCodeStyleViolated = false;
-        $this->input  = $input;
-        $this->output = $output;
+        $this->input               = $input;
+        $this->output              = $output;
         $this->output->writeln('<fg=white;options=bold;bg=red>Code Quality Tool</fg=white;options=bold;bg=red>');
         $this->output->writeln('<info>Fetching files</info>');
-        $files = $this->extractCommitedFiles();
+        $this->commitedFiles = $this->extractCommitedFiles();
 
-        if (self::IS_LINT ? !$this->phpLint($files) : false) {
+        if (self::IS_LINT ? !$this->phpLint($this->commitedFiles) : false) {
             throw new \Exception('There are some PHP syntax errors!');
         }
 
-        if (self::IS_PHPFIXER ? $this->isCodeStyleViolated = !$this->checkCodeStylePhpFixer($files) : false) {
+        if (self::IS_PHPFIXER ? $this->isCodeStyleViolated = !$this->checkCodeStylePhpFixer($this->commitedFiles) : false) {
             $this->output->writeln('<error>There are coding standards violations by php-cs-fixer!</error>');
         }
 
-        if (self::IS_PHPCS ? $this->isCodeStyleViolated = !$this->checkCodeStylePhpCS($files) : false) {
+        if (self::IS_PHPCS ? $this->isCodeStyleViolated = !$this->checkCodeStylePhpCS($this->commitedFiles) : false) {
             $this->output->writeln('<error>There are PHPCS coding standards violations!</error>');
         }
 
@@ -77,7 +84,8 @@ class CodeQualityTool extends Application
             $question = new ConfirmationQuestion('Continue auto fix with php-cs-fixer?', false);
             if ($helper->ask($this->input, $this->output, $question)) {
                 $this->output->writeln('<info>Autofixing code style</info>');
-                $this->fixCodeStylePhpFixer($files);
+                $this->fixCodeStylePhpFixer($this->commitedFiles);
+                $this->gitAddToCommitAutofixedFiles();
             }
             $question = new ConfirmationQuestion('Restart check again?', false);
             if ($helper->ask($this->input, $this->output, $question)) {
@@ -85,7 +93,7 @@ class CodeQualityTool extends Application
             }
         }
 
-        if (self::IS_PHPMD ? !$this->phPmd($files) : false) {
+        if (self::IS_PHPMD ? !$this->phPmd($this->commitedFiles) : false) {
             throw new \Exception(sprintf('There are PHPMD violations!'));
         }
 
@@ -123,9 +131,7 @@ class CodeQualityTool extends Application
             if (!$process->isSuccessful()) {
                 $this->output->writeln($file);
                 $this->output->writeln(sprintf('<error>%s</error>', trim($process->getErrorOutput())));
-                if ($succeed) {
-                    $succeed = false;
-                }
+                $succeed = false;
             }
         }
 
@@ -156,9 +162,7 @@ class CodeQualityTool extends Application
                 $this->output->writeln($file);
                 $this->output->writeln(sprintf('<error>%s</error>', trim($process->getErrorOutput())));
                 $this->output->writeln(sprintf('<info>%s</info>', trim($process->getOutput())));
-                if ($succeed) {
-                    $succeed = false;
-                }
+                $succeed = false;
             }
         }
 
@@ -198,15 +202,13 @@ class CodeQualityTool extends Application
                 continue;
             }
             $processBuilder = new ProcessBuilder(array('php', VENDOR_DIR . '/bin/php-cs-fixer', '--dry-run', '--diff', '--verbose', 'fix', $file, '--rules=@PSR2'));
-            $processBuilder->setWorkingDirectory(__DIR__ . '/../../../../../');
+            $processBuilder->setWorkingDirectory($this->getWorkingDir());
             $phpCsFixer = $processBuilder->getProcess();
             $phpCsFixer->enableOutput();
             $phpCsFixer->run();
             if (!$phpCsFixer->isSuccessful()) {
                 $this->output->writeln(sprintf('<error>%s</error>', trim($phpCsFixer->getOutput())));
-                if ($succeed) {
-                    $succeed = false;
-                }
+                $succeed = false;
             }
         }
 
@@ -225,15 +227,16 @@ class CodeQualityTool extends Application
                 continue;
             }
             $processBuilder = new ProcessBuilder(array('php', VENDOR_DIR . '/bin/php-cs-fixer', 'fix', $file, '--rules=@PSR2'));
-            $processBuilder->setWorkingDirectory(__DIR__ . '/../../../../../');
+            $processBuilder->setWorkingDirectory($this->getWorkingDir());
             $phpCsFixer = $processBuilder->getProcess();
             $phpCsFixer->enableOutput();
             $phpCsFixer->run();
             if (!$phpCsFixer->isSuccessful()) {
                 $this->output->writeln(sprintf('<error>%s</error>', trim($phpCsFixer->getOutput())));
-                if ($succeed) {
-                    $succeed = false;
-                }
+                $succeed = false;
+            } else {
+                $this->output->writeln($file);
+                $this->autoFixedFiles[] = $file;
             }
         }
 
@@ -255,17 +258,29 @@ class CodeQualityTool extends Application
             }
 
             $processBuilder = new ProcessBuilder(array('php', VENDOR_DIR . '/bin/phpcs', '-n', '--standard=' . $standard, $file));
-            $processBuilder->setWorkingDirectory(__DIR__ . '/../../../../../');
+            $processBuilder->setWorkingDirectory($this->getWorkingDir());
             $phpCsFixer = $processBuilder->getProcess();
             $phpCsFixer->run();
             if (!$phpCsFixer->isSuccessful()) {
                 $this->output->writeln(sprintf('<error>%s</error>', trim($phpCsFixer->getOutput())));
-                if ($succeed) {
-                    $succeed = false;
-                }
+                $succeed = false;
             }
         }
 
         return $succeed;
+    }
+
+    private function getWorkingDir(): string
+    {
+        return __DIR__ . '/../../../../../';
+    }
+
+    private function gitAddToCommitAutofixedFiles()
+    {
+        $this->output->writeln("Adding fixed files:");
+        foreach ($this->commitedFiles as $file) {
+            $this->output->writeln("git added ". $file);
+            exec("git add " . $this->getWorkingDir() . $file);
+        }
     }
 }

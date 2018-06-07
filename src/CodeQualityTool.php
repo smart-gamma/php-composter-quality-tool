@@ -32,7 +32,12 @@ class CodeQualityTool extends Application
     /**
      * @var array
      */
-    private $commitedFiles = [];
+    private $commitedFiles = []
+
+    /**
+     * @var array
+     */
+    private $autoFixedFiles = [];
 
     private $isCodeStyleViolated = false;
 
@@ -107,7 +112,6 @@ class CodeQualityTool extends Application
     {
         $output  = array();
         $against = 'HEAD';
-        //--cached
         exec("git diff-index --name-status $against | egrep '^(A|M)' | awk '{print $2;}'", $output);
 
         return $output;

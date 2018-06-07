@@ -8,7 +8,7 @@ The tool allows automaticly add git pre-commit hook to local dev machine and run
 - Unit tests
 - PHPMD(disabled)
 
-As additional feature it allow use php-cs-fixer with auto fix of commited files
+As additional feature it allows use php-cs-fixer with auto fix of commited files
 
 ## Install 
 

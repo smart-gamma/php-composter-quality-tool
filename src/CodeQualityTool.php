@@ -277,9 +277,8 @@ class CodeQualityTool extends Application
 
     private function gitAddToCommitAutofixedFiles()
     {
-        $this->output->writeln("Adding fixed files:");
         foreach ($this->commitedFiles as $file) {
-            $this->output->writeln("git added ". $file);
+            $this->output->writeln("git add " . $this->getWorkingDir() . $file);
             exec("git add " . $this->getWorkingDir() . $file);
         }
     }

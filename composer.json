@@ -22,7 +22,9 @@
     "symfony/console": "^3.0",
     "symfony/process": "^3.0",
     "squizlabs/php_codesniffer": "@stable",
-    "friendsofphp/php-cs-fixer": "^2.11"
+    "friendsofphp/php-cs-fixer": "^2.11",
+    "symfony/config": "^3.0",
+    "symfony/yaml": "^3.0"
   },
   "autoload": {
     "psr-4": {

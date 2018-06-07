@@ -11,6 +11,12 @@
   "type": "php-composter-action",
   "minimum-stability": "dev",
   "prefer-stable": true,
+  "repositories": [
+    {
+      "type" : "vcs",
+      "url" : "git@github.com:Evgenas/php-composter.git"
+    }
+  ],
   "require": {
     "php-composter/php-composter": "dev-master",
     "symfony/console": "^3.0",

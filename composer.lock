@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "002179ff11add93af7fe8132c8358143",
+    "content-hash": "556af3e1d42496c8bec75ab04d063a65",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -715,16 +715,16 @@
         },
         {
             "name": "paragonie/random_compat",
-            "version": "v2.0.12",
+            "version": "v2.0.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "258c89a6b97de7dfaf5b8c7607d0478e236b04fb"
+                "reference": "f6ce7dd93628088e1017fb5dd73b0b9fec7df9e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/258c89a6b97de7dfaf5b8c7607d0478e236b04fb",
-                "reference": "258c89a6b97de7dfaf5b8c7607d0478e236b04fb",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/f6ce7dd93628088e1017fb5dd73b0b9fec7df9e5",
+                "reference": "f6ce7dd93628088e1017fb5dd73b0b9fec7df9e5",
                 "shasum": ""
             },
             "require": {
@@ -756,23 +756,24 @@
             "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
             "keywords": [
                 "csprng",
+                "polyfill",
                 "pseudorandom",
                 "random"
             ],
-            "time": "2018-04-04T21:24:14+00:00"
+            "time": "2018-06-06T17:40:22+00:00"
         },
         {
             "name": "php-composter/php-composter",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/php-composter/php-composter.git",
-                "reference": "7c95008cc10f3f272ddef0f99f8b25784f258f06"
+                "url": "https://github.com/Evgenas/php-composter.git",
+                "reference": "c6138314811317fbbb4dd007e0a9e7a5527628b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-composter/php-composter/zipball/7c95008cc10f3f272ddef0f99f8b25784f258f06",
-                "reference": "7c95008cc10f3f272ddef0f99f8b25784f258f06",
+                "url": "https://api.github.com/repos/Evgenas/php-composter/zipball/c6138314811317fbbb4dd007e0a9e7a5527628b1",
+                "reference": "c6138314811317fbbb4dd007e0a9e7a5527628b1",
                 "shasum": ""
             },
             "require": {
@@ -793,7 +794,11 @@
                     "PHPComposter\\PHPComposter\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "PHPComposter\\Tests\\": "tests/src/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -806,7 +811,13 @@
                 }
             ],
             "description": "Git Hooks Management through Composer.",
-            "time": "2018-01-22T11:36:58+00:00"
+            "support": {
+                "issues": "https://github.com/php-composter/php-composter/issues",
+                "wiki": "https://github.com/php-composter/php-composter/wiki",
+                "source": "https://github.com/php-composter/php-composter/releases",
+                "docs": "https://github.com/php-composter/php-composter/blob/master/README.md"
+            },
+            "time": "2018-06-07T14:12:48+00:00"
         },
         {
             "name": "php-cs-fixer/diff",
@@ -1049,16 +1060,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.2.3",
+            "version": "3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "4842476c434e375f9d3182ff7b89059583aa8b27"
+                "reference": "d86873af43b4aa9d1f39a3601cc0cfcf02b25266"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/4842476c434e375f9d3182ff7b89059583aa8b27",
-                "reference": "4842476c434e375f9d3182ff7b89059583aa8b27",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/d86873af43b4aa9d1f39a3601cc0cfcf02b25266",
+                "reference": "d86873af43b4aa9d1f39a3601cc0cfcf02b25266",
                 "shasum": ""
             },
             "require": {
@@ -1096,7 +1107,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2018-02-20T21:35:23+00:00"
+            "time": "2018-06-06T23:58:19+00:00"
         },
         {
             "name": "symfony/console",

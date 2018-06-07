@@ -32,7 +32,7 @@ class CodeQualityTool extends Application
     /**
      * @var array
      */
-    private $commitedFiles = []
+    private $commitedFiles = [];
 
     /**
      * @var array
@@ -50,7 +50,7 @@ class CodeQualityTool extends Application
         parent::__construct('Smart Gamma Quality Tool', '1.0.0');
     }
 
-    public function isCodeStyleViolated()
+    public function isCodeStyleViolated(): bool
     {
         return $this->isCodeStyleViolated;
     }
@@ -108,7 +108,7 @@ class CodeQualityTool extends Application
     /**
      * @return array
      */
-    private function extractCommitedFiles()
+    private function extractCommitedFiles(): array
     {
         $output  = array();
         $against = 'HEAD';

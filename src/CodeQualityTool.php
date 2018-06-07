@@ -2,22 +2,38 @@
 
 namespace PHPComposter\GammaQualityTool;
 
+use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Yaml\Yaml;
 
 define('VENDOR_DIR', __DIR__ . '/../../../../../vendor');
 
 class CodeQualityTool extends Application
 {
+    /*
     const IS_PHPMD    = false;
     const IS_LINT     = false;
     const IS_PHPCS    = true;
     const IS_PHPFIXER = true;
     const IS_UNITS    = false;
     const IS_SELF_FIX = true;
+    */
+    /**
+     * @var array
+     */
+    private $configValues = [
+        'phpmd'    => false,
+        'lint'     => false,
+        'phpcs'    => true,
+        'phpfixer' => true,
+        'units'    => false,
+        'self_fix' => true,
+    ];
 
     /**
      * @var OutputInterface
@@ -47,14 +63,24 @@ class CodeQualityTool extends Application
 
     public function __construct()
     {
+        $this->configure();
         parent::__construct('Smart Gamma Quality Tool', '1.0.0');
+    }
+
+    private function configure()
+    {
+        try {
+            $fileLocator        = new FileLocator(VENDOR_DIR . '/../app/Resources/GammaQualityTool');
+            $configFiles        = $fileLocator->locate('config.yml', null, false);
+            $this->configValues = Yaml::parse(file_get_contents($configFiles[0]));
+        } catch (FileLocatorFileNotFoundException $e) {
+        }
     }
 
     public function isCodeStyleViolated(): bool
     {
         return $this->isCodeStyleViolated;
     }
-
 
     /**
      * @param InputInterface  $input
@@ -72,15 +98,15 @@ class CodeQualityTool extends Application
         $this->output->writeln('<info>Fetching files</info>');
         $this->commitedFiles = $this->extractCommitedFiles();
 
-        if (self::IS_LINT ? !$this->phpLint($this->commitedFiles) : false) {
+        if ($this->configValues['lint'] ? !$this->phpLint($this->commitedFiles) : false) {
             throw new \Exception('There are some PHP syntax errors!');
         }
 
-        if (self::IS_PHPFIXER ? $this->isCodeStyleViolated = !$this->checkCodeStylePhpFixer($this->commitedFiles) : false) {
+        if ($this->configValues['phpfixer'] ? $this->isCodeStyleViolated = !$this->checkCodeStylePhpFixer($this->commitedFiles) : false) {
             $this->output->writeln('<error>There are coding standards violations by php-cs-fixer!</error>');
         }
 
-        if (self::IS_PHPCS ? $this->isCodeStyleViolated = !$this->checkCodeStylePhpCS($this->commitedFiles) : false) {
+        if ($this->configValues['phpcs'] ? $this->isCodeStyleViolated = !$this->checkCodeStylePhpCS($this->commitedFiles) : false) {
             $this->output->writeln('<error>There are PHPCS coding standards violations!</error>');
         }
 
@@ -98,7 +124,7 @@ class CodeQualityTool extends Application
             }
         }
 
-        if (self::IS_PHPMD ? !$this->phPmd($this->commitedFiles) : false) {
+        if ($this->configValues['phpmd'] ? !$this->phPmd($this->commitedFiles) : false) {
             throw new \Exception(sprintf('There are PHPMD violations!'));
         }
 

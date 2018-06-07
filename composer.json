@@ -34,7 +34,6 @@
   "extra": {
     "php-composter-hooks": {
       "10.pre-commit": "PHPComposter\\GammaQualityTool\\Sniffer::preCommit"
-    },
-    "class" : "PHPComposter\\GammaQualityTool\\Plugin"
+    }
   }
 }

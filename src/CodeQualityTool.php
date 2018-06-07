@@ -15,14 +15,6 @@ define('VENDOR_DIR', __DIR__ . '/../../../../../vendor');
 
 class CodeQualityTool extends Application
 {
-    /*
-    const IS_PHPMD    = false;
-    const IS_LINT     = false;
-    const IS_PHPCS    = true;
-    const IS_PHPFIXER = true;
-    const IS_UNITS    = false;
-    const IS_SELF_FIX = true;
-    */
     /**
      * @var array
      */
@@ -71,8 +63,8 @@ class CodeQualityTool extends Application
     {
         try {
             $fileLocator        = new FileLocator(VENDOR_DIR . '/../app/Resources/GammaQualityTool');
-            $configFiles        = $fileLocator->locate('config.yml', null, false);
-            $this->configValues = Yaml::parse(file_get_contents($configFiles[0]));
+            $configFile        = $fileLocator->locate('config.yml');
+            $this->configValues = Yaml::parse(file_get_contents($configFile));
         } catch (FileLocatorFileNotFoundException $e) {
         }
     }

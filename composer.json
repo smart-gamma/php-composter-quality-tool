@@ -24,7 +24,8 @@
     "squizlabs/php_codesniffer": "@stable",
     "friendsofphp/php-cs-fixer": "^2.11",
     "symfony/config": "^3.0",
-    "symfony/yaml": "^3.0"
+    "symfony/yaml": "^3.0",
+    "phpmd/phpmd": "@stable"
   },
   "autoload": {
     "psr-4": {

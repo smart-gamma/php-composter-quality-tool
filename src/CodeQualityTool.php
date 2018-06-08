@@ -102,8 +102,9 @@ class CodeQualityTool extends Application
             $this->output->writeln('<error>There are PHPCS coding standards violations!</error>');
         }
 
+        $helper = $this->getHelperSet()->get('question');
+
         if ($this->isCodeStyleViolated) {
-            $helper   = $this->getHelperSet()->get('question');
             $question = new ConfirmationQuestion('Continue auto fix with php-cs-fixer?', false);
             if ($helper->ask($this->input, $this->output, $question)) {
                 $this->output->writeln('<info>Autofixing code style</info>');
@@ -117,7 +118,11 @@ class CodeQualityTool extends Application
         }
 
         if ($this->configValues['phpmd'] ? !$this->phPmd($this->commitedFiles) : false) {
-            throw new \Exception(sprintf('There are PHPMD violations!'));
+            $this->output->writeln('<error>There are PHPMD violations! Resolve them manually and type \'y\' or let them be added "as is"  - type \'n\'</error>');
+            $question = new ConfirmationQuestion('Restart check again?', false);
+            if ($helper->ask($this->input, $this->output, $question)) {
+                $this->run();
+            }
         }
 
         $this->output->writeln('<info>Well done!</info>');
@@ -176,8 +181,8 @@ class CodeQualityTool extends Application
             if (!preg_match($needle, $file)) {
                 continue;
             }
-            $processBuilder = new ProcessBuilder(['php', VENDOR_DIR . '/../bin/phpmd', $file, 'text', $rule]);
-            $processBuilder->setWorkingDirectory($rootPath);
+            $processBuilder = new ProcessBuilder(['php', VENDOR_DIR . '/bin/phpmd', $file, 'text', $rule]);
+            $processBuilder->setWorkingDirectory($this->getWorkingDir());
             $process = $processBuilder->getProcess();
             $process->run();
             if (!$process->isSuccessful()) {

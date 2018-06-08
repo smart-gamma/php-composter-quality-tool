@@ -29,7 +29,7 @@ class Installer
      */
     public static function getConfig()
     {
-        $output = 'phpmd: false' . PHP_EOL;
+        $output = 'phpmd: true' . PHP_EOL;
         $output .= 'lint: false' . PHP_EOL;
         $output .= 'phpcs: true' . PHP_EOL;
         $output .= 'phpfixer: true' . PHP_EOL;

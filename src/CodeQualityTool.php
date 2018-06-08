@@ -176,7 +176,7 @@ class CodeQualityTool extends Application
             if (!preg_match($needle, $file)) {
                 continue;
             }
-            $processBuilder = new ProcessBuilder(['php', VENDOR_DIR . '/../bin/phpmd', $file, 'text', $rule]);
+            $processBuilder = new ProcessBuilder(['php', VENDOR_DIR . '/bin/phpmd', $file, 'text', $rule]);
             $processBuilder->setWorkingDirectory($rootPath);
             $process = $processBuilder->getProcess();
             $process->run();

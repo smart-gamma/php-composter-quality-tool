@@ -118,7 +118,7 @@ class CodeQualityTool extends Application
         }
 
         if ($this->configValues['phpmd'] ? !$this->phPmd($this->commitedFiles) : false) {
-            $this->output->writeln('<error>There are PHPMD violations!</error>');
+            $this->output->writeln('<error>There are PHPMD violations! Resolve them manually and type \'y\' or let them be added "as is"  - type \'n\'</error>');
             $question = new ConfirmationQuestion('Restart check again?', false);
             if ($helper->ask($this->input, $this->output, $question)) {
                 $this->run();

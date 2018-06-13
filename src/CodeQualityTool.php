@@ -121,6 +121,7 @@ class CodeQualityTool extends Application
             $this->output->writeln('<error>There are PHPMD violations! Resolve them manually and type \'y\' or let them be added "as is"  - type \'n\'</error>');
             $question = new ConfirmationQuestion('Restart check again?', false);
             if ($helper->ask($this->input, $this->output, $question)) {
+                $this->gitAddToCommitAutofixedFiles();
                 $this->run();
             }
         }

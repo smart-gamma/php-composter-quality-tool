@@ -301,7 +301,7 @@ class CodeQualityTool extends Application
 
     private function getWorkingDir(): string
     {
-        return __DIR__ . '/../../../../../';
+        return '/';
     }
 
     private function gitAddToCommitAutofixedFiles()

@@ -25,7 +25,8 @@
     "friendsofphp/php-cs-fixer": "^2.11",
     "symfony/config": "^3.0",
     "symfony/yaml": "^3.0",
-    "phpmd/phpmd": "@stable"
+    "phpmd/phpmd": "@stable",
+    "mi-schi/phpmd-symfony2": "^2.1"
   },
   "autoload": {
     "psr-4": {

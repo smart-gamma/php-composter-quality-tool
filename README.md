@@ -28,7 +28,13 @@ As additional feature it allows use php-cs-fixer with auto fix of commited files
 ``
 composer require --dev smart-gamma/php-composter-quality-tool
 ``
+## Configuration
 
+if you wnt modify default configuration, add follow line to composer.json "post-install-cmd" / "post-update-cmd"
+
+``
+"PHPComposter\\GammaQualityTool\\Installer::persistConfig"
+``
 ## Usage
 
 1. Edit source files

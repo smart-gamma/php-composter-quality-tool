@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a0d7e64d73baf44c89c51f14bc4cf9c6",
+    "content-hash": "284c376b55b1a8ebe708f27effa9404f",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -712,6 +712,57 @@
                 "schema"
             ],
             "time": "2018-02-14T22:26:30+00:00"
+        },
+        {
+            "name": "mi-schi/phpmd-symfony2",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mi-schi/phpmd-symfony2.git",
+                "reference": "a6d514710ac1ba86254db337d4d0545cf9e020d7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mi-schi/phpmd-symfony2/zipball/a6d514710ac1ba86254db337d4d0545cf9e020d7",
+                "reference": "a6d514710ac1ba86254db337d4d0545cf9e020d7",
+                "shasum": ""
+            },
+            "require": {
+                "phpmd/phpmd": ">=2.3.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "@stable",
+                "phpunit/phpunit": "^4.7",
+                "symfony/process": "^2.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MS\\PHPMD\\Rule\\": "Rule/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Schindler",
+                    "email": "madsn@gmx.de"
+                }
+            ],
+            "description": "Extended mess detection rules from phpmd for Symfony applications.",
+            "homepage": "https://github.com/mi-schi/phpmd-symfony2",
+            "keywords": [
+                "Symfony2",
+                "clean code",
+                "extends",
+                "mess detection",
+                "phpmd",
+                "rules"
+            ],
+            "abandoned": "https://github.com/mi-schi/phpmd-extension",
+            "time": "2016-05-10T06:24:53+00:00"
         },
         {
             "name": "paragonie/random_compat",

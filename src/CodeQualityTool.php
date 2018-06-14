@@ -19,7 +19,7 @@ class CodeQualityTool extends Application
      * @var array
      */
     private $configValues = [
-        'phpmd'    => false,
+        'phpmd'    => true,
         'lint'     => false,
         'phpcs'    => true,
         'phpfixer' => true,

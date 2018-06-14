@@ -13,11 +13,14 @@ use PHPComposter\PHPComposter\BaseAction;
 
 class Sniffer extends BaseAction
 {
+    const IS_MIRROR_STAGE = false;
+
     public function preCommit()
     {
-        var_dump($this->getStagedFiles());
+        $files = $this->getStagedFiles('', self::IS_MIRROR_STAGE);
+        var_dump($files);
 
-        $app = new CodeQualityTool($this->getStagedFiles());
+        $app = new CodeQualityTool($files);
         //$app->doRun(new ArgvInput(), new ConsoleOutput());
         $app->run();
 

@@ -10,16 +10,16 @@
 namespace PHPComposter\GammaQualityTool;
 
 use PHPComposter\PHPComposter\BaseAction;
-use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Output\ConsoleOutput;
-
 
 class Sniffer extends BaseAction
 {
+    const IS_MIRROR_STAGE = false;
+
     public function preCommit()
     {
-        $app = new CodeQualityTool();
-        $app->doRun(new ArgvInput(), new ConsoleOutput());
+        $files = $this->getStagedFiles('', self::IS_MIRROR_STAGE);
+        $app = new CodeQualityTool($files, $this->root);
+        $app->run();
 
         if (!$app->isCodeStyleViolated()) {
             exit(0);

@@ -18,10 +18,7 @@ class Sniffer extends BaseAction
     public function preCommit()
     {
         $files = $this->getStagedFiles('', self::IS_MIRROR_STAGE);
-        var_dump($files);
-
-        $app = new CodeQualityTool($files);
-        //$app->doRun(new ArgvInput(), new ConsoleOutput());
+        $app = new CodeQualityTool($files, $this->root);
         $app->run();
 
         if (!$app->isCodeStyleViolated()) {

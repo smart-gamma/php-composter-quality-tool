@@ -192,7 +192,7 @@ class CodeQualityTool extends Application
         $this->output->writeln('<info>Checking code style by php-cs-fixer</info>');
         $succeed = true;
         foreach ($files as $file) {
-            $processBuilder = new ProcessBuilder(array('php', './vendor/bin/php-cs-fixer', '--dry-run', '--diff', '--verbose', 'fix', $file, '--rules=@PSR2'));
+            $processBuilder = new ProcessBuilder(array('php', './vendor/bin/php-cs-fixer', '--dry-run', '--diff', '--verbose', 'fix', $file, '--rules=@Symfony'));
             $processBuilder->setWorkingDirectory($this->getWorkingDir());
             $phpCsFixer = $processBuilder->getProcess();
             $phpCsFixer->enableOutput();
@@ -212,7 +212,7 @@ class CodeQualityTool extends Application
         $this->output->writeln('<info>Fixing code style by php-cs-fixer</info>');
         $succeed = true;
         foreach ($files as $file) {
-            $processBuilder = new ProcessBuilder(array('php', './vendor/bin/php-cs-fixer', 'fix', $file, '--rules=@PSR2'));
+            $processBuilder = new ProcessBuilder(array('php', './vendor/bin/php-cs-fixer', 'fix', $file, '--rules=@Symfony'));
             //$processBuilder->setWorkingDirectory($this->getWorkingDir());
             $phpCsFixer = $processBuilder->getProcess();
             $phpCsFixer->enableOutput();

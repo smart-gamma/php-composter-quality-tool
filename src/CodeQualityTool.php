@@ -17,12 +17,14 @@ class CodeQualityTool extends Application
      * @var array
      */
     private $configValues = [
-        'phpmd'    => true,
-        'lint'     => false,
-        'phpcs'    => true,
-        'phpfixer' => true,
-        'units'    => false,
-        'self_fix' => true,
+        'phpmd'             => true,
+        'lint'              => false,
+        'phpcs'             => true,
+        'phpcs_standard'    => 'PSR2',
+        'phpfixer'          => true,
+        'phpfixer_standard' => 'Symfony',
+        'units'             => false,
+        'self_fix'          => true,
     ];
 
     /**
@@ -59,7 +61,7 @@ class CodeQualityTool extends Application
     public function __construct(array $commitedFiles, string $workingDir)
     {
         $this->commitedFiles = $commitedFiles;
-        $this->workingDir = $workingDir;
+        $this->workingDir    = $workingDir;
         $this->configure();
         parent::__construct('Smart Gamma Quality Tool', '1.0.4');
     }
@@ -68,7 +70,7 @@ class CodeQualityTool extends Application
     {
         try {
             $fileLocator        = new FileLocator($this->getWorkingDir() . '/app/Resources/GammaQualityTool');
-            $configFile        = $fileLocator->locate('config.yml');
+            $configFile         = $fileLocator->locate('config.yml');
             $this->configValues = Yaml::parse(file_get_contents($configFile));
         } catch (FileLocatorFileNotFoundException $e) {
         }
@@ -162,7 +164,7 @@ class CodeQualityTool extends Application
     {
         $this->output->writeln('<info>Checking code mess with PHPMD</info>');
         $succeed  = true;
-        $fileRule =  $this->getWorkingDir() . '/phpmd.xml';
+        $fileRule = $this->getWorkingDir() . '/phpmd.xml';
 
         if (file_exists($fileRule)) {
             $rule = $fileRule;
@@ -171,7 +173,7 @@ class CodeQualityTool extends Application
         }
 
         foreach ($files as $file) {
-            $processBuilder = new ProcessBuilder(['php',  './vendor/bin/phpmd', $file, 'text', $rule]);
+            $processBuilder = new ProcessBuilder(['php', './vendor/bin/phpmd', $file, 'text', $rule]);
             $processBuilder->setWorkingDirectory($this->getWorkingDir());
             $process = $processBuilder->getProcess();
             $process->run();
@@ -192,7 +194,7 @@ class CodeQualityTool extends Application
         $this->output->writeln('<info>Checking code style by php-cs-fixer</info>');
         $succeed = true;
         foreach ($files as $file) {
-            $processBuilder = new ProcessBuilder(array('php', './vendor/bin/php-cs-fixer', '--dry-run', '--diff', '--verbose', 'fix', $file, '--rules=@Symfony'));
+            $processBuilder = new ProcessBuilder(array('php', './vendor/bin/php-cs-fixer', '--dry-run', '--diff', '--verbose', 'fix', $file, '--rules=@' . $this->configValues['phpfixer_standard']));
             $processBuilder->setWorkingDirectory($this->getWorkingDir());
             $phpCsFixer = $processBuilder->getProcess();
             $phpCsFixer->enableOutput();
@@ -212,8 +214,8 @@ class CodeQualityTool extends Application
         $this->output->writeln('<info>Fixing code style by php-cs-fixer</info>');
         $succeed = true;
         foreach ($files as $file) {
-            $processBuilder = new ProcessBuilder(array('php', './vendor/bin/php-cs-fixer', 'fix', $file, '--rules=@Symfony'));
-            //$processBuilder->setWorkingDirectory($this->getWorkingDir());
+            $processBuilder = new ProcessBuilder(array('php', './vendor/bin/php-cs-fixer', 'fix', $file, '--rules=@' . $this->configValues['phpfixer_standard']));
+            $processBuilder->setWorkingDirectory($this->getWorkingDir());
             $phpCsFixer = $processBuilder->getProcess();
             $phpCsFixer->enableOutput();
             $phpCsFixer->run();
@@ -234,11 +236,10 @@ class CodeQualityTool extends Application
     {
         $this->output->writeln('<info>Checking code style with PHPCS</info>');
 
-        $succeed  = true;
-        $standard = 'PSR2';
+        $succeed = true;
 
         foreach ($files as $file) {
-            $processBuilder = new ProcessBuilder(array('php', './vendor/bin/phpcs', '-n', '--standard=' . $standard, $file));
+            $processBuilder = new ProcessBuilder(array('php', './vendor/bin/phpcs', '-n', '--standard=' . $this->configValues['phpcs_standard'], $file));
             $processBuilder->setWorkingDirectory($this->getWorkingDir());
             $phpCsFixer = $processBuilder->getProcess();
             $phpCsFixer->run();

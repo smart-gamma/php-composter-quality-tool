@@ -15,13 +15,13 @@ class Sniffer extends BaseAction
 {
     public function preCommit()
     {
+        var_dump($this->getStagedFiles());
+
         $app = new CodeQualityTool($this->getStagedFiles());
         //$app->doRun(new ArgvInput(), new ConsoleOutput());
         $app->run();
 
         if (!$app->isCodeStyleViolated()) {
-
-
             exit(0);
         } else {
             echo 'PHP Code Sniffer found errors! Aborting Commit.' . PHP_EOL;

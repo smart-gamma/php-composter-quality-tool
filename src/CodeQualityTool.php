@@ -283,6 +283,7 @@ class CodeQualityTool extends Application
             $srcFile     = preg_match(self::PHP_FILES_IN_SRC, $file);
             $featureFile = preg_match(self::PHP_FILES_IN_FEATURES, $file);
             if (!$srcFile && !$featureFile) {
+                echo "skipping:".$file. MSG_EOF;
                 continue;
             }
             echo  VENDOR_DIR . '/bin/phpcs', '-n', '--standard=' . $standard;

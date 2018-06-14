@@ -50,7 +50,12 @@ class CodeQualityTool extends Application
     /**
      * @var bool
      */
-    private $isCodeStyleViolated = false;
+    private $isCodeStyleViolatedByFixer = false;
+
+    /**
+     * @var bool
+     */
+    private $isCodeStyleViolatedByCS = false;
 
     /**
      * @var string
@@ -78,7 +83,7 @@ class CodeQualityTool extends Application
 
     public function isCodeStyleViolated(): bool
     {
-        return $this->isCodeStyleViolated;
+        return $this->isCodeStyleViolatedByFixer || $this->isCodeStyleViolatedByCS;
     }
 
     /**
@@ -100,17 +105,17 @@ class CodeQualityTool extends Application
             throw new \Exception('There are some PHP syntax errors!');
         }
 
-        if ($this->configValues['phpfixer'] ? $this->isCodeStyleViolated = !$this->checkCodeStylePhpFixer($this->commitedFiles) : false) {
+        if ($this->configValues['phpfixer'] ? $this->isCodeStyleViolatedByFixer = !$this->checkCodeStylePhpFixer($this->commitedFiles) : false) {
             $this->output->writeln('<error>There are coding standards violations by php-cs-fixer!</error>');
         }
 
-        if ($this->configValues['phpcs'] ? $this->isCodeStyleViolated = !$this->checkCodeStylePhpCS($this->commitedFiles) : false) {
+        if ($this->configValues['phpcs'] ? $this->isCodeStyleViolatedByCS = !$this->checkCodeStylePhpCS($this->commitedFiles) : false) {
             $this->output->writeln('<error>There are PHPCS coding standards violations!</error>');
         }
 
         $helper = $this->getHelperSet()->get('question');
 
-        if ($this->isCodeStyleViolated) {
+        if ($this->isCodeStyleViolated()) {
             $question = new ConfirmationQuestion('Continue auto fix with php-cs-fixer?', false);
             if ($helper->ask($this->input, $this->output, $question)) {
                 $this->output->writeln('<info>Autofixing code style</info>');

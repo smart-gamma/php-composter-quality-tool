@@ -10,9 +10,6 @@
 namespace PHPComposter\GammaQualityTool;
 
 use PHPComposter\PHPComposter\BaseAction;
-use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Output\ConsoleOutput;
-
 
 class Sniffer extends BaseAction
 {

@@ -285,7 +285,7 @@ class CodeQualityTool extends Application
             if (!$srcFile && !$featureFile) {
                 continue;
             }
-
+            echo  VENDOR_DIR . '/bin/phpcs', '-n', '--standard=' . $standard;
             $processBuilder = new ProcessBuilder(array('php', VENDOR_DIR . '/bin/phpcs', '-n', '--standard=' . $standard, $file));
             $processBuilder->setWorkingDirectory($this->getWorkingDir());
             $phpCsFixer = $processBuilder->getProcess();
@@ -301,7 +301,7 @@ class CodeQualityTool extends Application
 
     private function getWorkingDir(): string
     {
-        return '/';
+        return __DIR__ . '/../../../../../';
     }
 
     private function gitAddToCommitAutofixedFiles()

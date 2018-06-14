@@ -18,8 +18,9 @@ class Sniffer extends BaseAction
 {
     public function preCommit()
     {
-        $app = new CodeQualityTool();
-        $app->doRun(new ArgvInput(), new ConsoleOutput());
+        $app = new CodeQualityTool($this->getStagedFiles());
+        //$app->doRun(new ArgvInput(), new ConsoleOutput());
+        $app->run();
 
         if (!$app->isCodeStyleViolated()) {
             exit(0);

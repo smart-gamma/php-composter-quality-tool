@@ -53,8 +53,10 @@ class CodeQualityTool extends Application
     const PHP_FILES_IN_CLASSES  = '/^classes\/(.*)(\.php)$/';
     const PHP_FILES_IN_FEATURES = '/^features\/(.*)(\.php)$/';
 
-    public function __construct()
+    public function __construct(array $commitedFiles)
     {
+        $this->commitedFiles = $commitedFiles;
+
         $this->configure();
         parent::__construct('Smart Gamma Quality Tool', '1.0.0');
     }
@@ -88,7 +90,6 @@ class CodeQualityTool extends Application
         $this->output              = $output;
         $this->output->writeln('<fg=white;options=bold;bg=red>Code Quality Tool</fg=white;options=bold;bg=red>');
         $this->output->writeln('<info>Fetching files</info>');
-        $this->commitedFiles = $this->extractCommitedFiles();
 
         if ($this->configValues['lint'] ? !$this->phpLint($this->commitedFiles) : false) {
             throw new \Exception('There are some PHP syntax errors!');
@@ -136,7 +137,7 @@ class CodeQualityTool extends Application
     {
         $output  = array();
         $against = 'HEAD';
-        exec("git diff-index --name-status $against | egrep '^(A|M)' | awk '{print $2;}'", $output);
+        //exec("git diff-index --name-status $against | egrep '^(A|M)' | awk '{print $2;}'", $output);
 
         return $output;
     }

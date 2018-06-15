@@ -14,10 +14,10 @@ use Symfony\Component\Yaml\Yaml;
 
 class CodeQualityTool extends Application
 {
-    const APP_NAME = 'Smart Gamma Quality Tool';
-    const APP_VERSION = '1.0.4';
+    const APP_NAME               = 'Smart Gamma Quality Tool';
+    const APP_VERSION            = '1.0.4';
     const APP_CONFIG_FOLDER_PATH = '/app/Resources/GammaQualityTool';
-    const APP_CONFIG_FILE_NAME = 'config.yml';
+    const APP_CONFIG_FILE_NAME   = 'config.yml';
 
     /**
      * @var array
@@ -31,6 +31,7 @@ class CodeQualityTool extends Application
         'phpfixer_standard' => 'Symfony',
         'units'             => false,
         'self_fix'          => true,
+        'exclude_dirs'      => '/app,/bin',
     ];
 
     /**
@@ -56,6 +57,11 @@ class CodeQualityTool extends Application
     /**
      * @var array
      */
+    private $trackedFiles = [];
+
+    /**
+     * @var array
+     */
     private $autoFixedFiles = [];
 
     /**
@@ -73,13 +79,25 @@ class CodeQualityTool extends Application
      */
     private $workingDir;
 
-
     public function __construct(array $commitedFiles, string $workingDir)
     {
         $this->commitedFiles = $commitedFiles;
         $this->workingDir    = $workingDir;
-        $this->configure();
         parent::__construct(self::APP_NAME, self::APP_VERSION);
+    }
+
+    private function filterExcludedFiles($files)
+    {
+        $excludeDirs = explode(",", $this->getConfig('exclude_dirs'));
+
+        return array_filter(
+            $files,
+            function ($file) use ($excludeDirs) {
+                $expr = '!^' . $this->getWorkingDir() . '(' . implode('|', $excludeDirs) . ')/(.*?).php$!';
+
+                return !preg_match($expr, $file);
+            }
+        );
     }
 
     private function configure()
@@ -110,18 +128,21 @@ class CodeQualityTool extends Application
         $this->isCodeStyleViolated = false;
         $this->input               = $input;
         $this->output              = $output;
+        $this->configure();
+        $this->trackedFiles = $this->filterExcludedFiles($this->commitedFiles);
+
         $this->output->writeln(sprintf('<fg=white;options=bold;bg=blue>%s %s</fg=white;options=bold;bg=blue>', self::APP_NAME, self::APP_VERSION));
         $this->output->writeln('<info>Fetching files</info>');
 
-        if ($this->configValues['lint'] ? !$this->phpLint($this->commitedFiles) : false) {
+        if ($this->configValues['lint'] ? !$this->phpLint($this->trackedFiles) : false) {
             throw new \Exception('There are some PHP syntax errors!');
         }
 
-        if ($this->configValues['phpfixer'] ? $this->isCodeStyleViolatedByFixer = !$this->checkCodeStylePhpFixer($this->commitedFiles) : false) {
+        if ($this->configValues['phpfixer'] ? $this->isCodeStyleViolatedByFixer = !$this->checkCodeStylePhpFixer($this->trackedFiles) : false) {
             $this->output->writeln('<error>There are coding standards violations by php-cs-fixer!</error>');
         }
 
-        if ($this->configValues['phpcs'] ? $this->isCodeStyleViolatedByCS = !$this->checkCodeStylePhpCS($this->commitedFiles) : false) {
+        if ($this->configValues['phpcs'] ? $this->isCodeStyleViolatedByCS = !$this->checkCodeStylePhpCS($this->trackedFiles) : false) {
             $this->output->writeln('<error>There are PHPCS coding standards violations!</error>');
         }
 
@@ -131,7 +152,7 @@ class CodeQualityTool extends Application
             $question = new ConfirmationQuestion('Continue auto fix with php-cs-fixer?', false);
             if ($helper->ask($this->input, $this->output, $question)) {
                 $this->output->writeln('<info>Autofixing code style</info>');
-                $this->fixCodeStylePhpFixer($this->commitedFiles);
+                $this->fixCodeStylePhpFixer($this->trackedFiles);
                 $this->gitAddToCommitAutofixedFiles();
             }
 
@@ -141,7 +162,7 @@ class CodeQualityTool extends Application
             }
         }
 
-        if ($this->configValues['phpmd'] ? !$this->phPmd($this->commitedFiles) : false) {
+        if ($this->configValues['phpmd'] ? !$this->phPmd($this->trackedFiles) : false) {
             $this->output->writeln('<error>There are PHPMD violations! Resolve them manually and type \'y\' or let them be added "as is"  - type \'n\'</error>');
             $question = new ConfirmationQuestion('Restart check again?', false);
 
@@ -320,7 +341,7 @@ class CodeQualityTool extends Application
 
     private function gitAddToCommitAutofixedFiles()
     {
-        foreach ($this->commitedFiles as $file) {
+        foreach ($this->trackedFiles as $file) {
             $this->output->writeln("git add " . $file);
             exec("git add " . $file);
         }
@@ -341,7 +362,9 @@ class CodeQualityTool extends Application
     {
         if (!array_key_exists($key, $this->configValues) && array_key_exists($key, $this->defaultConfigValues)) {
             $this->configValues[$key] = $this->defaultConfigValues[$key];
-            $this->output->writeln(sprintf('<comment>Configuration key "%s" is not defined at %s, using default: %s</comment>', $key, self::APP_CONFIG_FOLDER_PATH . self::APP_CONFIG_FILE_NAME, $key .'='. $this->defaultConfigValues[$key]));
+            $this->output->writeln(
+                sprintf('<comment>Configuration key "%s" is not defined at %s, using default: %s</comment>', $key, self::APP_CONFIG_FOLDER_PATH . self::APP_CONFIG_FILE_NAME, $key . '=' . $this->defaultConfigValues[$key])
+            );
         }
     }
 }

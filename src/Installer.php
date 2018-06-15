@@ -5,9 +5,24 @@ namespace PHPComposter\GammaQualityTool;
 use Composer\Util\Filesystem;
 use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Process\ProcessBuilder;
 
 class Installer
 {
+    public static function install()
+    {
+        self::composerInstall();
+        self::persistConfig();
+    }
+
+    public static function composerInstall()
+    {
+        $processBuilder = new ProcessBuilder(['php', '../../../../vendor/bin/composer', '-n', 'install']);
+        $processBuilder->setWorkingDirectory(__DIR__);
+        $process = $processBuilder->getProcess();
+        $process->run();
+    }
+
     public static function persistConfig()
     {
         $filesystem = new Filesystem();

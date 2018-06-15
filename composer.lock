@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "284c376b55b1a8ebe708f27effa9404f",
+    "content-hash": "24e286b9a3b8dfcf8d7090d6c2971f4f",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -712,6 +712,55 @@
                 "schema"
             ],
             "time": "2018-02-14T22:26:30+00:00"
+        },
+        {
+            "name": "mi-schi/phpmd-extension",
+            "version": "4.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mi-schi/phpmd-extension.git",
+                "reference": "090e97b7a552b6e5b30a6c54a88911ee5fe181e5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mi-schi/phpmd-extension/zipball/090e97b7a552b6e5b30a6c54a88911ee5fe181e5",
+                "reference": "090e97b7a552b6e5b30a6c54a88911ee5fe181e5",
+                "shasum": ""
+            },
+            "require": {
+                "phpmd/phpmd": "^2.3"
+            },
+            "require-dev": {
+                "mockery/mockery": "@stable",
+                "phpunit/phpunit": "^4.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MS\\PHPMD\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Schindler",
+                    "email": "madsn@gmx.de"
+                }
+            ],
+            "description": "Contains extra phpmd rules from clean code book and the best practices of my experiences.",
+            "homepage": "https://github.com/mi-schi/phpmd-extension",
+            "keywords": [
+                "best practices",
+                "clean code",
+                "extension",
+                "mess detection",
+                "phpmd",
+                "rules"
+            ],
+            "time": "2017-07-24T15:03:11+00:00"
         },
         {
             "name": "mi-schi/phpmd-symfony2",

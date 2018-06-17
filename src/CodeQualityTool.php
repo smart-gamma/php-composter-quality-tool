@@ -15,7 +15,7 @@ use Symfony\Component\Yaml\Yaml;
 class CodeQualityTool extends Application
 {
     const APP_NAME               = 'Smart Gamma Quality Tool';
-    const APP_VERSION            = '1.0.4';
+    const APP_VERSION            = 'v0.1.6';
     const APP_CONFIG_FOLDER_PATH = '/app/Resources/GammaQualityTool';
     const APP_CONFIG_FILE_NAME   = 'config.yml';
 
@@ -93,9 +93,9 @@ class CodeQualityTool extends Application
         return array_filter(
             $files,
             function ($file) use ($excludeDirs) {
-                $expr = '!^' . $this->getWorkingDir() . '(' . implode('|', $excludeDirs) . ')/(.*?).php$!';
+                $expr = '!^' . $this->getWorkingDir() . '(' . implode('|', $excludeDirs) . ')/(.*?)$!';
 
-                return !preg_match($expr, $file);
+                return preg_match( '/(\.php)$/', $file) && !preg_match($expr, $file);
             }
         );
     }
@@ -365,7 +365,7 @@ class CodeQualityTool extends Application
 
     private function gitAddToCommitAutofixedFiles()
     {
-        foreach ($this->trackedFiles as $file) {
+        foreach ($this->commitedFiles as $file) {
             $this->output->writeln("git add " . $file);
             exec("git add " . $file);
         }

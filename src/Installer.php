@@ -45,13 +45,14 @@ class Installer
     public static function getConfig()
     {
         $output = 'phpmd: true' . PHP_EOL;
-        $output .= 'lint: false' . PHP_EOL;
+        $output .= 'lint: true' . PHP_EOL;
         $output .= 'phpcs: true' . PHP_EOL;
         $output .= 'phpcs_standard: PSR2' . PHP_EOL;
         $output .= 'phpfixer: true' . PHP_EOL;
         $output .= 'phpfixer_standard: Symfony' . PHP_EOL;
-        $output .= 'units: false' . PHP_EOL;
+        $output .= 'phpspec: false' . PHP_EOL;
         $output .= 'self_fix: true' . PHP_EOL;
+        $output .= 'exclude_dirs: /app,/bin' . PHP_EOL;
 
         return $output;
     }

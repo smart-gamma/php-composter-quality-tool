@@ -29,7 +29,7 @@ class CodeQualityTool extends Application
         'phpcs_standard'    => 'PSR2',
         'phpfixer'          => true,
         'phpfixer_standard' => 'Symfony',
-        'units'             => false,
+        'phpspec'           => false,
         'self_fix'          => true,
         'exclude_dirs'      => '/app,/bin',
     ];
@@ -172,12 +172,13 @@ class CodeQualityTool extends Application
             }
         }
 
+        if ($this->configValues['phpspec'] ? !$this->phpSpec() : false) {
+            throw new \Exception('There are some phpSpec tests broken');
+        }
+
         $this->output->writeln('<info>Well done!</info>');
     }
 
-    /**
-     * @throws \Exception
-     */
     private function phpLint(array $files): bool
     {
         $this->output->writeln('<info>Running PHPLint</info>');
@@ -201,6 +202,29 @@ class CodeQualityTool extends Application
                 $this->output->writeln(sprintf('<error>%s</error>', trim($process->getErrorOutput())));
                 $succeed = false;
             }
+        }
+
+        return $succeed;
+    }
+
+    private function phpSpec(): bool
+    {
+        $this->output->writeln('<info>Running phpSpec tests</info>');
+        $succeed = true;
+
+        $processBuilder = new ProcessBuilder(
+            [
+                'vendor/bin/phpspec',
+                'run',
+            ]
+        );
+        $process        = $processBuilder->getProcess();
+        $process->run();
+        $this->output->writeln($process->getOutput());
+
+        if (!$process->isSuccessful()) {
+            $this->output->writeln(sprintf('<error>%s</error>', trim($process->getErrorOutput())));
+            $succeed = false;
         }
 
         return $succeed;

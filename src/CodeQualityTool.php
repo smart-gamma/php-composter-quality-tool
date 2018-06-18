@@ -15,7 +15,7 @@ use Symfony\Component\Yaml\Yaml;
 class CodeQualityTool extends Application
 {
     const APP_NAME               = 'Smart Gamma Quality Tool';
-    const APP_VERSION            = 'v0.1.6';
+    const APP_VERSION            = 'v0.1.7';
     const APP_CONFIG_FOLDER_PATH = '/app/Resources/GammaQualityTool';
     const APP_CONFIG_FILE_NAME   = 'config.yml';
 
@@ -95,7 +95,7 @@ class CodeQualityTool extends Application
             function ($file) use ($excludeDirs) {
                 $expr = '!^' . $this->getWorkingDir() . '(' . implode('|', $excludeDirs) . ')/(.*?)$!';
 
-                return preg_match( '/(\.php)$/', $file) && !preg_match($expr, $file);
+                return preg_match('/(\.php)$/', $file) && !preg_match($expr, $file);
             }
         );
     }
@@ -134,15 +134,15 @@ class CodeQualityTool extends Application
         $this->output->writeln(sprintf('<fg=white;options=bold;bg=blue>%s %s</fg=white;options=bold;bg=blue>', self::APP_NAME, self::APP_VERSION));
         $this->output->writeln('<info>Fetching files</info>');
 
-        if ($this->configValues['lint'] ? !$this->phpLint($this->trackedFiles) : false) {
+        if ($this->getConfig('lint') ? !$this->phpLint($this->trackedFiles) : false) {
             throw new \Exception('There are some PHP syntax errors!');
         }
 
-        if ($this->configValues['phpfixer'] ? $this->isCodeStyleViolatedByFixer = !$this->checkCodeStylePhpFixer($this->trackedFiles) : false) {
+        if ($this->getConfig('phpfixer') ? $this->isCodeStyleViolatedByFixer = !$this->checkCodeStylePhpFixer($this->trackedFiles) : false) {
             $this->output->writeln('<error>There are coding standards violations by php-cs-fixer!</error>');
         }
 
-        if ($this->configValues['phpcs'] ? $this->isCodeStyleViolatedByCS = !$this->checkCodeStylePhpCS($this->trackedFiles) : false) {
+        if ($this->getConfig('phpcs') ? $this->isCodeStyleViolatedByCS = !$this->checkCodeStylePhpCS($this->trackedFiles) : false) {
             $this->output->writeln('<error>There are PHPCS coding standards violations!</error>');
         }
 
@@ -162,7 +162,7 @@ class CodeQualityTool extends Application
             }
         }
 
-        if ($this->configValues['phpmd'] ? !$this->phPmd($this->trackedFiles) : false) {
+        if ($this->getConfig('phpmd') ? !$this->phPmd($this->trackedFiles) : false) {
             $this->output->writeln('<error>There are PHPMD violations! Resolve them manually and type \'y\' or let them be added "as is"  - type \'n\'</error>');
             $question = new ConfirmationQuestion('Restart check again?', false);
 
@@ -172,11 +172,9 @@ class CodeQualityTool extends Application
             }
         }
 
-        if ($this->configValues['phpspec'] ? !$this->phpSpec() : false) {
+        if ($this->getConfig('phpspec') ? !$this->phpSpec() : false) {
             throw new \Exception('There are some phpSpec tests broken');
         }
-
-        $this->output->writeln('<info>Well done!</info>');
     }
 
     private function phpLint(array $files): bool
@@ -386,8 +384,9 @@ class CodeQualityTool extends Application
     {
         if (!array_key_exists($key, $this->configValues) && array_key_exists($key, $this->defaultConfigValues)) {
             $this->configValues[$key] = $this->defaultConfigValues[$key];
+            $defaultValueOutput       = is_bool($this->defaultConfigValues[$key]) ? var_export($this->defaultConfigValues[$key], 1) : $this->defaultConfigValues[$key];
             $this->output->writeln(
-                sprintf('<comment>Configuration key "%s" is not defined at %s, using default: %s</comment>', $key, self::APP_CONFIG_FOLDER_PATH . self::APP_CONFIG_FILE_NAME, $key . '=' . $this->defaultConfigValues[$key])
+                sprintf('<comment>Configuration key "%s" is not defined at %s, using default: %s</comment>', $key, self::APP_CONFIG_FOLDER_PATH . self::APP_CONFIG_FILE_NAME, $key . '=' . $defaultValueOutput)
             );
         }
     }

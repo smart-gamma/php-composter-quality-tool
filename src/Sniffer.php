@@ -14,6 +14,7 @@ use PHPComposter\PHPComposter\BaseAction;
 class Sniffer extends BaseAction
 {
     const IS_MIRROR_STAGE = false;
+    const ERROR_CODE = 1;
 
     public function preCommit()
     {
@@ -22,10 +23,9 @@ class Sniffer extends BaseAction
         $app->run();
 
         if (!$app->isCodeStyleViolated()) {
-            exit(0);
+            $this->success('Success');
         } else {
-            echo 'PHP Code Sniffer found errors! Aborting Commit.' . PHP_EOL;
-            exit(1);
+            $this->error('PHP Code Sniffer found errors! Aborting Commit.', self::ERROR_CODE);
         }
     }
 }

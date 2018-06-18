@@ -175,6 +175,8 @@ class CodeQualityTool extends Application
         if ($this->getConfig('phpspec') ? !$this->phpSpec() : false) {
             throw new \Exception('There are some phpSpec tests broken');
         }
+
+        $this->output->writeln('<info>Well done!</info>');
     }
 
     private function phpLint(array $files): bool

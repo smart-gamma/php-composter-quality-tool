@@ -23,7 +23,7 @@ class Sniffer extends BaseAction
         $app->run();
 
         if (!$app->isCodeStyleViolated()) {
-            $this->success('Well done');
+            $this->success('Success');
         } else {
             $this->error('PHP Code Sniffer found errors! Aborting Commit.', self::ERROR_CODE);
         }

@@ -7,7 +7,7 @@ use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\ProcessBuilder;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Yaml\Yaml;
@@ -188,14 +188,7 @@ class CodeQualityTool extends Application
             if (!preg_match($needle, $file)) {
                 continue;
             }
-            $processBuilder = new ProcessBuilder(
-                [
-                    'php',
-                    '-l',
-                    $file,
-                ]
-            );
-            $process        = $processBuilder->getProcess();
+            $process = new Process("php -l $file");
             $process->run();
             if (!$process->isSuccessful()) {
                 $this->output->writeln($file);
@@ -211,14 +204,7 @@ class CodeQualityTool extends Application
     {
         $this->output->writeln('<info>Running phpSpec tests</info>');
         $succeed = true;
-
-        $processBuilder = new ProcessBuilder(
-            [
-                'vendor/bin/phpspec',
-                'run',
-            ]
-        );
-        $process        = $processBuilder->getProcess();
+        $process        = new Process('vendor/bin/phpspec run');
         $process->run();
         $this->output->writeln($process->getOutput());
 
@@ -243,17 +229,7 @@ class CodeQualityTool extends Application
         }
 
         foreach ($files as $file) {
-            $processBuilder = new ProcessBuilder(
-                [
-                    'php',
-                    './vendor/bin/phpmd',
-                    $file,
-                    'text',
-                    $rule,
-                ]
-            );
-            $processBuilder->setWorkingDirectory($this->getWorkingDir());
-            $process = $processBuilder->getProcess();
+            $process = new Process("php vendor/bin/phpmd $file text $rule");
             $process->run();
 
             if (!$process->isSuccessful()) {
@@ -272,7 +248,7 @@ class CodeQualityTool extends Application
         $this->output->writeln('<info>Checking code style by php-cs-fixer</info>');
         $succeed = true;
         foreach ($files as $file) {
-            $processBuilder = new ProcessBuilder(
+            $command = implode(' ',
                 [
                     'php',
                     './vendor/bin/php-cs-fixer',
@@ -284,8 +260,7 @@ class CodeQualityTool extends Application
                     '--rules=@' . $this->getConfig('phpfixer_standard'),
                 ]
             );
-            $processBuilder->setWorkingDirectory($this->getWorkingDir());
-            $phpCsFixer = $processBuilder->getProcess();
+            $phpCsFixer = new Process($command);
             $phpCsFixer->enableOutput();
             $phpCsFixer->run();
 
@@ -303,7 +278,7 @@ class CodeQualityTool extends Application
         $this->output->writeln('<info>Fixing code style by php-cs-fixer</info>');
         $succeed = true;
         foreach ($files as $file) {
-            $processBuilder = new ProcessBuilder(
+            $command = implode(' ',
                 [
                     'php',
                     './vendor/bin/php-cs-fixer',
@@ -312,8 +287,7 @@ class CodeQualityTool extends Application
                     '--rules=@' . $this->getConfig('phpfixer_standard'),
                 ]
             );
-            $processBuilder->setWorkingDirectory($this->getWorkingDir());
-            $phpCsFixer = $processBuilder->getProcess();
+            $phpCsFixer = new Process($command);
             $phpCsFixer->enableOutput();
             $phpCsFixer->run();
 
@@ -336,7 +310,7 @@ class CodeQualityTool extends Application
         $succeed = true;
 
         foreach ($files as $file) {
-            $processBuilder = new ProcessBuilder(
+            $command = implode(' ',
                 [
                     'php',
                     './vendor/bin/phpcs',
@@ -345,8 +319,7 @@ class CodeQualityTool extends Application
                     $file,
                 ]
             );
-            $processBuilder->setWorkingDirectory($this->getWorkingDir());
-            $phpCsFixer = $processBuilder->getProcess();
+            $phpCsFixer = new Process($command);
             $phpCsFixer->run();
 
             if (!$phpCsFixer->isSuccessful()) {

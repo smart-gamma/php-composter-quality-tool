@@ -88,6 +88,6 @@ class Installer
      */
     private static function getWorkingDir()
     {
-        return __DIR__ . '/../../../..';
+        return __DIR__ . '/../../../../..';
     }
 }

@@ -13,6 +13,7 @@ class Installer
     {
         self::composerInstall();
         self::persistConfig();
+        self::persistPhpMDConfig();
     }
 
     public static function composerInstall()
@@ -37,10 +38,22 @@ class Installer
         }
     }
 
+    public static function persistPhpMDConfig()
+    {
+        $path = static::getWorkingDir();
+
+        try {
+            $fileLocator = new FileLocator($path);
+            $fileLocator->locate('phpmd.xml');
+        } catch (FileLocatorFileNotFoundException $e) {
+            file_put_contents($path . '/phpmd.xml', static::getPhpMDConfig());
+        }
+    }
+
     /**
      * Generate the config file.
      *
-     * @return string Generated Config file.
+     * @return string Generated Config content.
      */
     public static function getConfig()
     {
@@ -55,5 +68,26 @@ class Installer
         $output .= 'exclude_dirs: /app,/bin' . PHP_EOL;
 
         return $output;
+    }
+
+    /**
+     * Read PhpMD config file.
+     *
+     * @return string Generated PhpMD Config content.
+     */
+    public static function getPhpMDConfig()
+    {
+        $fileLocator        = new FileLocator(__DIR__ .'/../');
+        $configFile         = $fileLocator->locate('phpmd.xml');
+
+        return file_get_contents($configFile);
+    }
+
+    /**
+     * @return string
+     */
+    private static function getWorkingDir()
+    {
+        return __DIR__ . '/../../../..';
     }
 }

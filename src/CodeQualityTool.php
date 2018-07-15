@@ -15,7 +15,7 @@ use Symfony\Component\Yaml\Yaml;
 class CodeQualityTool extends Application
 {
     const APP_NAME               = 'Smart Gamma Quality Tool';
-    const APP_VERSION            = 'v0.1.8';
+    const APP_VERSION            = 'v0.1.9';
     const APP_CONFIG_FOLDER_PATH = '/app/Resources/GammaQualityTool';
     const APP_CONFIG_FILE_NAME   = 'config.yml';
 

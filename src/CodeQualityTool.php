@@ -32,6 +32,7 @@ class CodeQualityTool extends Application
         'phpspec'           => false,
         'self_fix'          => true,
         'exclude_dirs'      => '/app,/bin',
+        'exclude_files'      => '.phpstorm.meta.php,_ide_helper.php',
     ];
 
     /**
@@ -89,13 +90,15 @@ class CodeQualityTool extends Application
     private function filterExcludedFiles($files)
     {
         $excludeDirs = explode(",", $this->getConfig('exclude_dirs'));
+        $excludeFiles = explode(",", $this->getConfig('exclude_files'));
 
         return array_filter(
             $files,
-            function ($file) use ($excludeDirs) {
-                $expr = '!^' . $this->getWorkingDir() . '(' . implode('|', $excludeDirs) . ')/(.*?)$!';
+            function ($file) use ($excludeDirs, $excludeFiles) {
+                $expr_dirs = '!^' . $this->getWorkingDir() . '(' . implode('|', $excludeDirs) . ')/(.*?)$!';
+                $expr_files = '!^' . $this->getWorkingDir() . '/(' . implode('|', $excludeFiles) . ')$!';
 
-                return preg_match('/(\.php)$/', $file) && !preg_match($expr, $file);
+                return preg_match('/(\.php)$/', $file) && !preg_match($expr_dirs, $file) && !preg_match($expr_files, $file);
             }
         );
     }

@@ -66,6 +66,7 @@ class Installer
         $output .= 'phpspec: false' . PHP_EOL;
         $output .= 'self_fix: true' . PHP_EOL;
         $output .= 'exclude_dirs: /app,/bin' . PHP_EOL;
+        $output .= 'exclude_files: .phpstorm.meta.php,_ide_helper.php' . PHP_EOL;
 
         return $output;
     }
